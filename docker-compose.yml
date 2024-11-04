@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  # MongoDB services
+  mongo_db: # Name of the service
+    container_name: mongo_db # Name of the service(Optional)
+    image: mongo:latest
+    restart: always
+    ports:
+      - '2717:27017' # Correct port mapping
+    volumes:
+      - mongo_db:/data/db # Persistent volume
+
+  # Node API service
+  app:
+    build: .
+    ports:
+      - '7007:7777'
+    environment:
+      PORT: 7777
+      MONGODB_URI: mongodb://mongo_db:27017/nestApplication
+      JWT_SECRET_KEY: you-cant-get-a-chance-to-decode-my-secret-key
+      JWT_EXPIRES_IN: '1h'
+      JWT_COOKIE_EXPIRES_IN: 1
+      FROM_ADDRESS: sharuknidamamidi@zazz.io
+      SENDGRID_API_KEY: #insert-sendgrid-api-key
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
